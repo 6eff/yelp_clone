@@ -11,5 +11,9 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe RestaurantsHelper, type: :helper do
+
+def sign_in
   pending "add some examples to (or delete) #{__FILE__}"
+end
+
 end

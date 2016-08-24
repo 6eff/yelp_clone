@@ -1,4 +1,13 @@
-require 'rails_helper'
+require_relative '../helpers/restaurants_helper_spec.rb'
+
+def sign_in
+  User.create email: 'email@email.com', password: '123456'
+  visit '/'
+  click_link 'Sign in'
+  fill_in 'user[email]', with: 'email@email.com'
+  fill_in 'user[password]', with: '123456'
+  click_button 'Log in'
+end
 
 feature 'restaurants' do
   context 'when there are no restaurants' do
@@ -22,7 +31,16 @@ feature 'restaurants' do
   end
 
   context 'creating restaurants' do
+
+    scenario 'only signed in user can add restaurant' do
+      visit '/restaurants'
+      click_link 'Add a restaurant'
+      expect(page).to have_content 'You need to sign in or sign up before continuing.'
+      expect(current_path).to eq '/users/sign_in'
+    end
+
     scenario 'prompt users to fill out a form, and then display the results' do
+      sign_in
       visit '/restaurants'
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
@@ -33,6 +51,7 @@ feature 'restaurants' do
 
     context 'an invalid restaurant' do
       it 'does not let you submit a name that is too short' do
+        sign_in
         visit '/restaurants'
         click_link 'Add a restaurant'
         fill_in 'Name', with: 'KF'
@@ -54,7 +73,10 @@ feature 'restaurants' do
   end
 
   context 'editing restaurants' do
-      before { Restaurant.create name: 'KFC', description: 'Deep fried goodness' }
+      before do
+        Restaurant.create name: 'KFC', description: 'Deep fried goodness'
+        sign_in
+      end
 
       scenario 'lets a user edit a restaurant' do
         visit '/restaurants'
@@ -69,7 +91,11 @@ feature 'restaurants' do
   end
 
   context 'deleting restaurants' do
-    before { Restaurant.create name: 'KFC', description: 'Deep fried goodness' }
+    before do
+      Restaurant.create name: 'KFC', description: 'Deep fried goodness'
+      sign_in
+    end
+
     scenario 'removes a restaurant when user clicks delete link' do
       visit '/restaurants'
       click_link 'Delete KFC'
