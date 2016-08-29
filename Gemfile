@@ -36,6 +36,7 @@ group :development, :test do
   gem 'capybara'
   gem 'byebug', platform: :mri
   gem 'rspec-collection_matchers'
+  gem 'shoulda-matchers', '~> 3.1'
 end
 
 group :development do
